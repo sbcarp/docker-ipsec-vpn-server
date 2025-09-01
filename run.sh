@@ -6,7 +6,7 @@
 # IN A CONTAINER!
 #
 # This file is part of IPsec VPN Docker image, available at:
-# https://github.com/hwdsl2/docker-ipsec-vpn-server
+# https://github.com/sbcarp/docker-ipsec-vpn-server
 #
 # Copyright (C) 2016-2024 Lin Song <linsongui@gmail.com>
 # Based on the work of Thomas Sarlandie (Copyright 2012)
@@ -54,7 +54,7 @@ fi
 if ip link add dummy0 type dummy 2>&1 | grep -q "not permitted"; then
 cat 1>&2 <<'EOF'
 Error: This Docker image should be run in privileged mode.
-       See: https://github.com/hwdsl2/docker-ipsec-vpn-server
+       See: https://github.com/sbcarp/docker-ipsec-vpn-server
 
 EOF
   exit 1
@@ -748,7 +748,7 @@ if [ ! -f "$ts_file" ] || [ "$(find "$ts_file" -mmin +10080)" ]; then
   touch "$ts_file"
   ipsec_ver=$(ipsec --version 2>/dev/null)
   swan_ver=$(printf '%s' "$ipsec_ver" | sed -e 's/.*Libreswan U\?//' -e 's/\( (\|\/K\).*//')
-  base_url="https://github.com/hwdsl2/vpn-extras/releases/download/v1.0.0"
+  base_url="https://github.com/sbcarp/vpn-extras/releases/download/v1.0.0"
   swan_ver_url="$base_url/upg-docker-$os_type-$os_arch-swanver"
   swan_ver_latest=$(wget -t 2 -T 10 -qO- "$swan_ver_url" | head -n 1)
   if printf '%s' "$swan_ver_latest" | grep -Eq '^([3-9]|[1-9][0-9]{1,2})(\.([0-9]|[1-9][0-9]{1,2})){1,2}$' \

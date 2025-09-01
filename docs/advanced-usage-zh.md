@@ -66,10 +66,10 @@ docker run \
     --sysctl net.ipv4.conf.default.accept_redirects=0 \
     --sysctl net.ipv4.conf.default.send_redirects=0 \
     --sysctl net.ipv4.conf.default.rp_filter=0 \
-    hwdsl2/ipsec-vpn-server
+    dockersbcarp/ipsec-vpn-server
 ```
 
-在不启用 privileged 模式运行时，容器不能更改 `sysctl` 设置。这可能会影响本镜像的某些功能。一个已知问题是 [Android/Linux MTU/MSS fix](https://github.com/hwdsl2/setup-ipsec-vpn/blob/master/docs/clients-zh.md#androidlinux-mtumss-问题) 需要另外在 `docker run` 命令添加 `--sysctl net.ipv4.ip_no_pmtu_disc=1` 才有效。如果你遇到任何问题，可以尝试换用 [privileged 模式](../README-zh.md#运行-ipsec-vpn-服务器) 重新创建容器。
+在不启用 privileged 模式运行时，容器不能更改 `sysctl` 设置。这可能会影响本镜像的某些功能。一个已知问题是 [Android/Linux MTU/MSS fix](https://github.com/sbcarp/setup-ipsec-vpn/blob/master/docs/clients-zh.md#androidlinux-mtumss-问题) 需要另外在 `docker run` 命令添加 `--sysctl net.ipv4.ip_no_pmtu_disc=1` 才有效。如果你遇到任何问题，可以尝试换用 [privileged 模式](../README-zh.md#运行-ipsec-vpn-服务器) 重新创建容器。
 
 在创建 Docker 容器之后，请转到 [获取 VPN 登录信息](../README-zh.md#获取-vpn-登录信息)。
 
@@ -134,7 +134,7 @@ iptables -t nat -I POSTROUTING -s 172.17.0.2 ! -o docker0 -j SNAT --to 192.0.2.2
 
 在使用 IPsec/XAuth ("Cisco IPsec") 或 IKEv2 模式连接时，VPN 服务器（Docker 容器）在虚拟网络 `192.168.43.0/24` 内 **没有** 内网 IP。为客户端分配的内网 IP 在这个范围内：`192.168.43.10` 到 `192.168.43.250`。
 
-高级用户可以将静态 IP 分配给 VPN 客户端。这是可选的。对于 **IKEv2 模式**，首先[在容器中运行 Bash shell](#在容器中运行-bash-shell)，然后按照[VPN 内网 IP 和流量](https://github.com/hwdsl2/setup-ipsec-vpn/blob/master/docs/advanced-usage-zh.md#vpn-内网-ip-和流量)中的 "IKEv2 模式：为 VPN 客户端分配静态 IP" 小节中的步骤操作。请注意，你需要跳过第 2, 3 和 5 步，并且在完成后重启 Docker 容器。这是因为对 `/etc/ipsec.conf` 的修改可能会在重启容器时被覆盖。
+高级用户可以将静态 IP 分配给 VPN 客户端。这是可选的。对于 **IKEv2 模式**，首先[在容器中运行 Bash shell](#在容器中运行-bash-shell)，然后按照[VPN 内网 IP 和流量](https://github.com/sbcarp/setup-ipsec-vpn/blob/master/docs/advanced-usage-zh.md#vpn-内网-ip-和流量)中的 "IKEv2 模式：为 VPN 客户端分配静态 IP" 小节中的步骤操作。请注意，你需要跳过第 2, 3 和 5 步，并且在完成后重启 Docker 容器。这是因为对 `/etc/ipsec.conf` 的修改可能会在重启容器时被覆盖。
 
 以下说明 **仅适用于** IPsec/L2TP 和 IPsec/XAuth ("Cisco IPsec") 模式。
 
@@ -206,7 +206,7 @@ VPN_SPLIT_IKEV2=10.123.123.0/24
 
 **选项 2：** 删除 Docker 容器以及 `ikev2-vpn-data` 卷，然后重新创建容器。这将**永久删除**所有的 VPN 配置。参见[配置并使用 IKEv2 VPN](../README-zh.md#配置并使用-ikev2-vpn) 中的"移除 IKEv2"部分。
 
-另外，Windows 用户也可以通过手动添加路由的方式启用 VPN 分流。有关详细信息，请参阅 [VPN 分流](https://github.com/hwdsl2/setup-ipsec-vpn/blob/master/docs/advanced-usage-zh.md#vpn-分流)。
+另外，Windows 用户也可以通过手动添加路由的方式启用 VPN 分流。有关详细信息，请参阅 [VPN 分流](https://github.com/sbcarp/setup-ipsec-vpn/blob/master/docs/advanced-usage-zh.md#vpn-分流)。
 
 ## 关于 host network 模式
 
@@ -270,22 +270,22 @@ docker exec -it ipsec-vpn-server ipsec trafficstatus
 高级用户可以从 GitHub 下载并自行编译源代码：
 
 ```
-git clone https://github.com/hwdsl2/docker-ipsec-vpn-server
+git clone https://github.com/sbcarp/docker-ipsec-vpn-server
 cd docker-ipsec-vpn-server
 # To build Alpine-based image
-docker build -t hwdsl2/ipsec-vpn-server .
+docker build -t dockersbcarp/ipsec-vpn-server .
 # To build Debian-based image
-docker build -f Dockerfile.debian -t hwdsl2/ipsec-vpn-server:debian .
+docker build -f Dockerfile.debian -t dockersbcarp/ipsec-vpn-server:debian .
 ```
 
 若不需要改动源码，也可以这样：
 
 ```
 # To build Alpine-based image
-docker build -t hwdsl2/ipsec-vpn-server github.com/hwdsl2/docker-ipsec-vpn-server
+docker build -t dockersbcarp/ipsec-vpn-server github.com/sbcarp/docker-ipsec-vpn-server
 # To build Debian-based image
-docker build -f Dockerfile.debian -t hwdsl2/ipsec-vpn-server:debian \
-  github.com/hwdsl2/docker-ipsec-vpn-server
+docker build -f Dockerfile.debian -t dockersbcarp/ipsec-vpn-server:debian \
+  github.com/sbcarp/docker-ipsec-vpn-server
 ```
 
 ## 在容器中运行 Bash shell
@@ -326,7 +326,7 @@ docker run \
     -p 500:500/udp \
     -p 4500:4500/udp \
     -d --privileged \
-    hwdsl2/ipsec-vpn-server
+    dockersbcarp/ipsec-vpn-server
 ```
 
 ## 部署 Google BBR 拥塞控制
@@ -335,7 +335,7 @@ VPN 服务器搭建完成后，可以通过在 Docker 主机上部署 Google BBR
 
 这通常只需要在配置文件 `/etc/sysctl.conf` 中插入设定即可完成。但是部分 Linux 发行版可能需要额外更新 Linux 内核。
 
-详细的部署方法，可以参考[这篇文档](https://github.com/hwdsl2/setup-ipsec-vpn/blob/master/docs/bbr-zh.md)。在完成后重启 Docker 容器：
+详细的部署方法，可以参考[这篇文档](https://github.com/sbcarp/setup-ipsec-vpn/blob/master/docs/bbr-zh.md)。在完成后重启 Docker 容器：
 
 ```
 docker restart ipsec-vpn-server
@@ -345,7 +345,7 @@ docker restart ipsec-vpn-server
 
 **注：** 预构建镜像中的软件组件（例如 Libreswan 和 xl2tpd）在其各自版权所有者选择的相应许可下。对于任何预构建的镜像的使用，用户有责任确保对该镜像的任何使用符合其中包含的所有软件的任何相关许可。
 
-版权所有 (C) 2016-2024 [Lin Song](https://github.com/hwdsl2) [![View my profile on LinkedIn](https://static.licdn.com/scds/common/u/img/webpromo/btn_viewmy_160x25.png)](https://www.linkedin.com/in/linsongui)
+版权所有 (C) 2016-2024 [Lin Song](https://github.com/sbcarp) [![View my profile on LinkedIn](https://static.licdn.com/scds/common/u/img/webpromo/btn_viewmy_160x25.png)](https://www.linkedin.com/in/linsongui)
 
 [![Creative Commons License](https://i.creativecommons.org/l/by-sa/3.0/88x31.png)](http://creativecommons.org/licenses/by-sa/3.0/)   
 这个项目是以 [知识共享署名-相同方式共享3.0](http://creativecommons.org/licenses/by-sa/3.0/) 许可协议授权。   

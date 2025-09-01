@@ -30,7 +30,7 @@ on:
 jobs:
   buildx:
     runs-on: ubuntu-22.04
-    if: github.repository_owner == 'hwdsl2'
+    if: github.repository_owner == 'sbcarp'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -81,7 +81,7 @@ jobs:
           docker buildx version
 
           image_cache_dir="${RUNNER_TEMP}/.docker-images"
-          for image in "quay.io/hwdsl2/qemu-user-static:latest" "moby/buildkit:buildx-stable-1"; do
+          for image in "quay.io/dockersbcarp/qemu-user-static:latest" "moby/buildkit:buildx-stable-1"; do
             image_file=$(printf '%s' "${image}.tar.gz" | tr '/' '-' | tr ':' '-')
             if [ -s "${image_cache_dir}/${image_file}" ]; then
               echo "Using ${image} from cache..."
@@ -94,7 +94,7 @@ jobs:
             fi
           done
 
-          docker run --rm --privileged quay.io/hwdsl2/qemu-user-static:latest --reset -p yes --credential yes
+          docker run --rm --privileged quay.io/dockersbcarp/qemu-user-static:latest --reset -p yes --credential yes
           docker buildx create --name "builder-${GITHUB_SHA::8}" --driver docker-container --use
           docker buildx inspect --bootstrap
       - name: Docker Hub Login

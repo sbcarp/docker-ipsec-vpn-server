@@ -66,10 +66,10 @@ docker run \
     --sysctl net.ipv4.conf.default.accept_redirects=0 \
     --sysctl net.ipv4.conf.default.send_redirects=0 \
     --sysctl net.ipv4.conf.default.rp_filter=0 \
-    hwdsl2/ipsec-vpn-server
+    dockersbcarp/ipsec-vpn-server
 ```
 
-When running without privileged mode, the container is unable to change `sysctl` settings. This could affect certain features of this image. A known issue is that the [Android/Linux MTU/MSS fix](https://github.com/hwdsl2/setup-ipsec-vpn/blob/master/docs/clients.md#androidlinux-mtumss-issues) also requires adding `--sysctl net.ipv4.ip_no_pmtu_disc=1` to the `docker run` command. If you encounter any issues, try re-creating the container using [privileged mode](../README.md#start-the-ipsec-vpn-server).
+When running without privileged mode, the container is unable to change `sysctl` settings. This could affect certain features of this image. A known issue is that the [Android/Linux MTU/MSS fix](https://github.com/sbcarp/setup-ipsec-vpn/blob/master/docs/clients.md#androidlinux-mtumss-issues) also requires adding `--sysctl net.ipv4.ip_no_pmtu_disc=1` to the `docker run` command. If you encounter any issues, try re-creating the container using [privileged mode](../README.md#start-the-ipsec-vpn-server).
 
 After creating the Docker container, see [Retrieve VPN login details](../README.md#retrieve-vpn-login-details).
 
@@ -134,7 +134,7 @@ When connecting using IPsec/L2TP mode, the VPN server (Docker container) has int
 
 When connecting using IPsec/XAuth ("Cisco IPsec") or IKEv2 mode, the VPN server (Docker container) does NOT have an internal IP within the VPN subnet `192.168.43.0/24`. Clients are assigned internal IPs from `192.168.43.10` to `192.168.43.250`.
 
-Advanced users may optionally assign static IPs to VPN clients. For **IKEv2 mode**, first open a [Bash shell inside the container](#bash-shell-inside-container), then follow the steps in section "IKEv2 mode: Assign static IPs to VPN clients" of [Internal VPN IPs and traffic](https://github.com/hwdsl2/setup-ipsec-vpn/blob/master/docs/advanced-usage.md#internal-vpn-ips-and-traffic). Note that you should skip steps 2, 3 and 5, and restart the Docker container when finished. This is because changes to `/etc/ipsec.conf` may be overwritten on container restart.
+Advanced users may optionally assign static IPs to VPN clients. For **IKEv2 mode**, first open a [Bash shell inside the container](#bash-shell-inside-container), then follow the steps in section "IKEv2 mode: Assign static IPs to VPN clients" of [Internal VPN IPs and traffic](https://github.com/sbcarp/setup-ipsec-vpn/blob/master/docs/advanced-usage.md#internal-vpn-ips-and-traffic). Note that you should skip steps 2, 3 and 5, and restart the Docker container when finished. This is because changes to `/etc/ipsec.conf` may be overwritten on container restart.
 
 Instructions below **ONLY** apply to IPsec/L2TP and IPsec/XAuth ("Cisco IPsec") modes.
 
@@ -206,7 +206,7 @@ Note that this variable has no effect if IKEv2 is already set up in the Docker c
 
 **Option 2:** Remove both the Docker container and the `ikev2-vpn-data` volume, then re-create the Docker container. All VPN configuration will be **permanently deleted**. Refer to "remove IKEv2" in [Configure and use IKEv2 VPN](../README.md#configure-and-use-ikev2-vpn).
 
-Alternatively, Windows users can enable split tunneling by manually adding routes. For more details, see [Split tunneling](https://github.com/hwdsl2/setup-ipsec-vpn/blob/master/docs/advanced-usage.md#split-tunneling).
+Alternatively, Windows users can enable split tunneling by manually adding routes. For more details, see [Split tunneling](https://github.com/sbcarp/setup-ipsec-vpn/blob/master/docs/advanced-usage.md#split-tunneling).
 
 ## About host network mode
 
@@ -270,22 +270,22 @@ docker exec -it ipsec-vpn-server ipsec trafficstatus
 Advanced users can download and compile the source code from GitHub:
 
 ```
-git clone https://github.com/hwdsl2/docker-ipsec-vpn-server
+git clone https://github.com/sbcarp/docker-ipsec-vpn-server
 cd docker-ipsec-vpn-server
 # To build Alpine-based image
-docker build -t hwdsl2/ipsec-vpn-server .
+docker build -t dockersbcarp/ipsec-vpn-server .
 # To build Debian-based image
-docker build -f Dockerfile.debian -t hwdsl2/ipsec-vpn-server:debian .
+docker build -f Dockerfile.debian -t dockersbcarp/ipsec-vpn-server:debian .
 ```
 
 Or use this if not modifying the source code:
 
 ```
 # To build Alpine-based image
-docker build -t hwdsl2/ipsec-vpn-server github.com/hwdsl2/docker-ipsec-vpn-server
+docker build -t dockersbcarp/ipsec-vpn-server github.com/sbcarp/docker-ipsec-vpn-server
 # To build Debian-based image
-docker build -f Dockerfile.debian -t hwdsl2/ipsec-vpn-server:debian \
-  github.com/hwdsl2/docker-ipsec-vpn-server
+docker build -f Dockerfile.debian -t dockersbcarp/ipsec-vpn-server:debian \
+  github.com/sbcarp/docker-ipsec-vpn-server
 ```
 
 ## Bash shell inside container
@@ -326,7 +326,7 @@ docker run \
     -p 500:500/udp \
     -p 4500:4500/udp \
     -d --privileged \
-    hwdsl2/ipsec-vpn-server
+    dockersbcarp/ipsec-vpn-server
 ```
 
 ## Deploy Google BBR congestion control
@@ -335,7 +335,7 @@ After the VPN server is set up, the performance can be improved by deploying the
 
 This is usually done by modifying the configuration file `/etc/sysctl.conf`. However, some Linux distributions may additionally require updates to the Linux kernel.
 
-For detailed deployment methods, please refer to [this document](https://github.com/hwdsl2/setup-ipsec-vpn/blob/master/docs/bbr.md). When finished, restart the Docker container:
+For detailed deployment methods, please refer to [this document](https://github.com/sbcarp/setup-ipsec-vpn/blob/master/docs/bbr.md). When finished, restart the Docker container:
 
 ```
 docker restart ipsec-vpn-server
@@ -345,7 +345,7 @@ docker restart ipsec-vpn-server
 
 **Note:** The software components inside the pre-built image (such as Libreswan and xl2tpd) are under the respective licenses chosen by their respective copyright holders. As for any pre-built image usage, it is the image user's responsibility to ensure that any use of this image complies with any relevant licenses for all software contained within.
 
-Copyright (C) 2016-2024 [Lin Song](https://github.com/hwdsl2) [![View my profile on LinkedIn](https://static.licdn.com/scds/common/u/img/webpromo/btn_viewmy_160x25.png)](https://www.linkedin.com/in/linsongui)
+Copyright (C) 2016-2024 [Lin Song](https://github.com/sbcarp) [![View my profile on LinkedIn](https://static.licdn.com/scds/common/u/img/webpromo/btn_viewmy_160x25.png)](https://www.linkedin.com/in/linsongui)
 
 [![Creative Commons License](https://i.creativecommons.org/l/by-sa/3.0/88x31.png)](http://creativecommons.org/licenses/by-sa/3.0/)   
 This work is licensed under the [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/)   

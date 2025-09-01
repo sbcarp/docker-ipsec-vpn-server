@@ -27,7 +27,7 @@ on:
 jobs:
   check_update:
     runs-on: ubuntu-22.04
-    if: github.repository_owner == 'hwdsl2'
+    if: github.repository_owner == 'sbcarp'
     env:
       DOCKER_USER: ${{ github.repository_owner }}
       OS_TYPE: ${{ inputs.os_type }}

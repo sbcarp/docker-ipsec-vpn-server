@@ -23,11 +23,11 @@ on:
 
 jobs:
   shellcheck:
-    if: github.repository_owner == 'hwdsl2'
+    if: github.repository_owner == 'sbcarp'
     uses: ./.github/workflows/shellcheck.yml
 
   vpn_test:
-    if: github.repository_owner == 'hwdsl2'
+    if: github.repository_owner == 'sbcarp'
     uses: ./.github/workflows/vpn_test.yml
     with:
       os_type: debian
